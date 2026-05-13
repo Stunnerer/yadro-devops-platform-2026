@@ -1,0 +1,38 @@
+---
+- name: Install Docker and build/run container
+  hosts: all
+  become: true
+  tasks:
+    - name: Install Docker
+      ansible.builtin.include_role:
+        name: geerlingguy.docker
+
+    - name: Add user to the docker group
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: true
+
+    - name: Copy docker files to remote
+      ansible.builtin.copy:
+        src: docker/
+        dest: /tmp/docker/
+        mode: '0755'
+
+    - name: Build Docker Image from local directory
+      community.docker.docker_image:
+        name: http_status_checker
+        build:
+          path: /tmp/docker/
+        source: build
+
+    - name: Run Docker Container
+      community.docker.docker_container:
+        name: http_status_checker
+        image: http_status_checker
+        state: started
+        detach: false
+
+    - name: Show Docker logs
+      ansible.builtin.debug:
+        msg: "{{ container_result.container.Output }}"
