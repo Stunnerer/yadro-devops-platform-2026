@@ -1,11 +1,18 @@
 ---
-- name: Install Docker
+- name: Ensure Docker is installed and user is added to docker group
   hosts: all
   become: true
   tasks:
+    - name: Check if Docker is already installed
+      ansible.builtin.command: docker --version
+      register: docker_check
+      failed_when: false
+      changed_when: false
+
     - name: Install Docker
       ansible.builtin.include_role:
         name: geerlingguy.docker
+      when: docker_check.rc != 0
 
     - name: Add user to the docker group
       ansible.builtin.user:
