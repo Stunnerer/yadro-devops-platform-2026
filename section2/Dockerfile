@@ -7,4 +7,6 @@ RUN apt update && \
 WORKDIR /app
 COPY script.py .
 
+USER nobody
+
 CMD ["python3", "script.py"]
