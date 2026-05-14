@@ -3,22 +3,15 @@
   hosts: all
   become: true
   tasks:
-    - name: Check if Docker is already installed
-      ansible.builtin.command: docker --version
-      register: docker_check
-      failed_when: false
-      changed_when: false
-
     - name: Install Docker
       ansible.builtin.include_role:
         name: geerlingguy.docker
-      when: docker_check.rc != 0
+      vars:
+        docker_users:
+          - "{{ lookup('env', 'USER') }}"
 
-    - name: Add user to the docker group
-      ansible.builtin.user:
-        name: "{{ lookup('env', 'USER') }}"
-        groups: docker
-        append: true
+    - name: Reconnect to the host
+      ansible.builtin.meta: reset_connection
 
 - name: Build and run Docker container
   hosts: all
@@ -27,7 +20,7 @@
       ansible.builtin.copy:
         src: docker/
         dest: /tmp/docker/
-        mode: '0755'
+        mode: "0755"
 
     - name: Build Docker Image from local directory
       community.docker.docker_image:
