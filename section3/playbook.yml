@@ -1,5 +1,5 @@
 ---
-- name: Install Docker and build/run container
+- name: Install Docker
   hosts: all
   become: true
   tasks:
@@ -35,6 +35,7 @@
         image: http_status_checker
         state: started
         detach: false
+      register: container_result
 
     - name: Show Docker logs
       ansible.builtin.debug:
