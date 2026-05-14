@@ -13,6 +13,9 @@
         groups: docker
         append: true
 
+- name: Build and run Docker container
+  hosts: all
+  tasks:
     - name: Copy docker files to remote
       ansible.builtin.copy:
         src: docker/
