@@ -27,5 +27,3 @@ ansible-galaxy install -r section3/requirements.yml
 cd section3
 ansible-playbook playbook.yml -K
 ```
-
-*Примечание: Для выполнения установки Docker потребуются права sudo (пароль может быть запрошен в зависимости от настроек системы).*
